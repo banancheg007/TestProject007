@@ -26,10 +26,25 @@ import com.facebook.login.LoginResult
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.GoogleApiClient
+import com.google.android.youtube.player.YouTubeBaseActivity
+import com.google.android.youtube.player.YouTubeInitializationResult
+import com.google.android.youtube.player.YouTubePlayer
+import com.google.android.youtube.player.YouTubePlayerView
 import com.google.firebase.auth.*
 
 
-class MainActivity : AppCompatActivity(), View.OnClickListener {
+class MainActivity : View.OnClickListener, YouTubeFailureRecoveryActivity(){
+    override fun onInitializationSuccess(p0: YouTubePlayer.Provider?, p1: YouTubePlayer?, p2: Boolean) {
+        if (!p2) {
+            p1!!.cueVideo("wKJ9KzGQq0w");
+        }
+    }
+
+    override fun getYouTubePlayerProvider(): YouTubePlayer.Provider {
+        return youtube_view;
+    }
+
+
     override fun onClick(v: View?) {
         when(v!!.id){
             R.id.button_login-> {
@@ -111,6 +126,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                 // ...
             }
         })
+
+        youtube_view.initialize(DeveloperKey.DEVELOPER_KEY, this);
 
     }
 
