@@ -31,6 +31,8 @@ import com.google.android.youtube.player.YouTubeInitializationResult
 import com.google.android.youtube.player.YouTubePlayer
 import com.google.android.youtube.player.YouTubePlayerView
 import com.google.firebase.auth.*
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
 
 
 class MainActivity : View.OnClickListener, YouTubeFailureRecoveryActivity(){
@@ -89,6 +91,9 @@ class MainActivity : View.OnClickListener, YouTubeFailureRecoveryActivity(){
     private lateinit var auth: FirebaseAuth
     private lateinit var mGoogleSignInClient: GoogleSignInClient
     private lateinit var callbackManager: CallbackManager
+    private lateinit var database: FirebaseDatabase
+    private lateinit var myRef: DatabaseReference
+
     val TAG = "myTag"
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -99,6 +104,8 @@ class MainActivity : View.OnClickListener, YouTubeFailureRecoveryActivity(){
         button_login.setOnClickListener(this)
         button_logout.setOnClickListener(this)
         sign_in_button.setOnClickListener(this)
+
+
 
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken("862149992697-l7tnasiinusfcbrhrgk1oq54n5pj51ll.apps.googleusercontent.com")
@@ -129,6 +136,12 @@ class MainActivity : View.OnClickListener, YouTubeFailureRecoveryActivity(){
 
         youtube_view.initialize(DeveloperKey.DEVELOPER_KEY, this);
 
+        database = FirebaseDatabase.getInstance()
+        database.setPersistenceEnabled(true)
+        myRef = database.getReference("items")
+        var item: Item = Item("any", 12)
+        myRef.push().setValue(item)
+
     }
 
 
@@ -152,6 +165,7 @@ class MainActivity : View.OnClickListener, YouTubeFailureRecoveryActivity(){
             val uid = user.uid
 
             Log.d(TAG, email)
+            Log.d(TAG,user.let{it!!.uid})
 
 
             val account = GoogleSignIn.getLastSignedInAccount(this)
